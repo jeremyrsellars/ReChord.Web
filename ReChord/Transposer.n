@@ -1,0 +1,98 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace ReChord
+{
+  public class Transposer
+  {
+    halfStepsOffset : int;
+    
+    public this(halfSteps : int)
+    {
+      this.halfStepsOffset = halfSteps;
+    }
+    
+    public PreferFlats : bool {get;set;}
+    
+    public Transpose(chord : string) : string
+    {
+      def GetRootAndEmbelishment(chord : string)
+      {
+        def m = System.Text.RegularExpressions.Regex.Match(chord,@"[A-G][b#]?");
+        (m.Value, chord.Substring(m.Index + m.Length))
+      }
+    
+      def rootAndEmbelishment = GetRootAndEmbelishment(chord);
+      def chordHalfSteps = notes[rootAndEmbelishment[0]];
+      def newChordHalfSteps = chordHalfSteps + halfStepsOffset;
+      GetChord(newChordHalfSteps) + rootAndEmbelishment[1]
+    }
+
+    GetChord(chordHalfSteps : int) : string
+    {
+      def chordHalfSteps = Normalize(chordHalfSteps, -1, 11);
+      if (PreferFlats)
+        GetChordPreferFlats(chordHalfSteps)
+      else
+        GetChordPreferSharps(chordHalfSteps)
+    }
+    
+    static Normalize(mutable i : int, min : int, max : int) : int
+    {
+      while(i < min)
+        i += max - min;
+      while(i > max)
+        i -= max - min;
+      i
+    }
+    
+    GetChordPreferFlats(chordHalfSteps : int) : string
+    {
+      GetChords(chordHalfSteps).Last()
+    }
+    
+    GetChordPreferSharps(chordHalfSteps : int) : string
+    {
+      GetChords(chordHalfSteps).First()
+    }
+    
+    GetChords(chordHalfSteps : int) : IEnumerable.[string]
+    {
+      notes.Where(kvp => kvp.Value == chordHalfSteps).Select(kvp => kvp.Key)
+    }
+    static notes : Dictionary.[string,int];
+    
+    static this()
+    {
+      notes = CreateNotes()
+    }
+    static CreateNotes() : Dictionary.[string,int]
+    {
+      def notes = Dictionary.[string,int]();
+      notes["A"] = 0;
+      notes["A#"] = 1;
+      notes["Bb"] = 1;
+      notes["B"] = 2;
+      notes["C"] = 3;
+      notes["C#"] = 4;
+      notes["Db"] = 4;
+      notes["D"] = 5;
+      notes["D#"] = 6;
+      notes["Eb"] = 6;
+      notes["E"] = 7;
+      notes["F"] = 8;
+      notes["F#"] = 9;
+      notes["Gb"] = 9;
+      notes["G"] = 10;
+      notes["G#"] = 11;
+      notes["Ab"] = 11;
+      notes
+    }
+  }
+}

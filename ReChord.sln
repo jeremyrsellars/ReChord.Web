@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{EDCC3B85-0BAD-11DB-BC1A-00112FDE8B61}") = "ReChord", "ReChord\ReChord.nproj", "{020B2F0F-165D-4250-BC4D-0697BD4DB0CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{815EEE91-0F2A-48BB-8860-5CD2B840C6D9}"
+	ProjectSection(SolutionItems) = preProject
+		OnlyYou.txt = OnlyYou.txt
+		Surrender.txt = Surrender.txt
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{020B2F0F-165D-4250-BC4D-0697BD4DB0CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{020B2F0F-165D-4250-BC4D-0697BD4DB0CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{020B2F0F-165D-4250-BC4D-0697BD4DB0CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{020B2F0F-165D-4250-BC4D-0697BD4DB0CB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

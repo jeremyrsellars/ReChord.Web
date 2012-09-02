@@ -1,0 +1,52 @@
+﻿using Nemerle;
+using Nemerle.Collections;
+using Nemerle.Text;
+using Nemerle.Utility;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+
+namespace ReChord
+{
+  public class SimpleLineReader
+  {
+    rdr : TextReader;
+    mutable currentText : string;
+    
+    public this(rdr : TextReader)
+    {
+      this.rdr = rdr;
+    }
+    
+    public Read() : bool
+    {
+      currentText = rdr.ReadLine();
+      currentText != null
+    }
+    
+    public Current : Line
+    {
+      get{ParseLine(currentText)}
+    }
+    
+    public CurrentText : string
+    {
+      get{currentText}
+    }
+    
+    ParseLine(text : string) : Line
+    {
+      if (string.IsNullOrWhiteSpace(text))
+        Line.Separator(text)
+      else if (chordLineRegex.IsMatch(text))
+        Line.Chords(text)
+      else
+        Line.Lyric(text)
+    }
+    
+    chordLineRegex = Regex(@"^((\s*[A-G][b#]?[Mm]?(sus)?\d*)/?)+\s*$");
+  }
+}
