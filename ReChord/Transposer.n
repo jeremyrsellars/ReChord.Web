@@ -36,7 +36,7 @@ namespace ReChord
 
     GetChord(chordHalfSteps : int) : string
     {
-      def chordHalfSteps = Normalize(chordHalfSteps, -1, 11);
+      def chordHalfSteps = Normalize(chordHalfSteps, 0, 11);
       if (PreferFlats)
         GetChordPreferFlats(chordHalfSteps)
       else
@@ -46,9 +46,9 @@ namespace ReChord
     static Normalize(mutable i : int, min : int, max : int) : int
     {
       while(i < min)
-        i += max - min;
+        i += max - min + 1;
       while(i > max)
-        i -= max - min;
+        i -= max - min + 1;
       i
     }
     
