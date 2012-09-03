@@ -13,9 +13,40 @@ module Program
 {
   Main(args : array[string]) : void
   {
-    def input = if (args.Length == 0) Console.In else System.IO.File.OpenText(args[0]);
+    def canParse(s : string) : bool
+    {
+      mutable i : int;
+      int.TryParse(s, out i)
+    }
+    def ParseInputAndOffsets(args : array[string])
+    {
+      mutable i = 0;
+      def input = 
+        if (args.Length > 0 && canParse(args[0]))
+          Console.In;
+        else
+        {
+          i = 1;
+          System.IO.File.OpenText(args[0])
+        }
+      def offsets = List.[int]();
+      for(; i < args.Length; i++)
+      {
+        mutable offset : int;
+        when(int.TryParse(args[i], out offset))
+          offsets.Add(offset)
+      }
+      when (offsets.Count == 0)
+        offsets.Add(0);
+      (input, offsets)
+    }
+    
+    def inputAndOffsets = ParseInputAndOffsets(args);
+    def input = inputAndOffsets[0];
+    def offsets = inputAndOffsets[1];
     def rdr = SimpleLineReader(input);
-    def lines = Translate(ReadLines(rdr));
+    
+    def lines = Translate(offsets, ReadLines(rdr).ToList());
     OutputHtml(lines);
   }
   
@@ -25,27 +56,30 @@ module Program
       yield reader.Current;
   }
   
-  Translate(lines : IEnumerable.[Line]) : IEnumerable.[Line]
+  Translate(offsets : IEnumerable.[int], lines : IEnumerable.[Line]) : IDictionary.[int,IEnumerable.[Line]]
+  {
+    offsets.ToDictionary(offset => offset, offset => Translate(offset, lines));
+  }
+  
+  Translate(offsetHalfSteps : int, lines : IEnumerable.[Line]) : IEnumerable.[Line]
   {
     foreach(line in lines)
     {
       | chords is Line.Chords =>
-        //yield chords;
-        yield Translate(chords)
+        yield Translate(offsetHalfSteps, chords)
       | _ => yield line
     }
   }
   
-  Translate(chords : Line.Chords) : Line.Chords
+  Translate(offsetHalfSteps : int, chords : Line.Chords) : Line.Chords
   {
-    def newLine = ChordReplacer(chords.Text).Replace(Transposer(-2).Transpose);
+    def newLine = ChordReplacer(chords.Text).Replace(Transposer(offsetHalfSteps).Transpose);
     Line.Chords(newLine);
   }
   
-  OutputHtml(mutable lines : IEnumerable.[Line]) : void
+  OutputHtml(versions : IDictionary.[int,IEnumerable.[Line]]) : void
   {
-    lines = lines.ToList();
-    def title = lines.OfType.[Line.Lyric]().First().Text;
+    def title = versions.First().Value.OfType.[Line.Lyric]().First().Text;
     def style =
 @"
 <style type='text/css'>
@@ -57,7 +91,16 @@ h1 {font-family:verdana, helvetica; font-size: 14pt}
 </style>
 ";
     Console.WriteLine($"<html><head><title>$title</title>$style</head><body>");
-    OutputHtmlLines(lines);
+    foreach(pair in versions)
+    {
+      titleSuffix = match(pair.Key)
+      {
+        | 0 => ""
+        | s when s < 0 => "(Capo + " + -pair.Key + ")"
+        | s when s > 0 => "(Drop " + -pair.Key + ")"
+      }
+      OutputHtmlLines(pair.Value);
+    }
     Console.WriteLine("</body></html>");
   }
   
@@ -70,6 +113,8 @@ h1 {font-family:verdana, helvetica; font-size: 14pt}
       prevLine = line;
     }
   }
+  
+  mutable titleSuffix : string;
   
   OutputLine(line : Line, prevLine : Line) : void
   {
@@ -84,7 +129,7 @@ h1 {font-family:verdana, helvetica; font-size: 14pt}
       | (Line.Chords, _)                 => $"<span class='chord'>$text</span><br/>"
       | (Line.Lyric, Line.Chords)
       | (Line.Lyric, Line.Lyric)         => $"<span class='lyric'>$text</span><br/>"
-      | (Line.Lyric, null)               => $"<h1>$text</h1>"
+      | (Line.Lyric, null)               => $"<h1>$text $titleSuffix</h1>"
       | (Line.Lyric, _)                  => $"<h3>$text</h3>"
       | (Line.Separator, Line.Separator) => ""
       | (Line.Separator, _)              => "<br/>"
