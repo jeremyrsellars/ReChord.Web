@@ -3,3 +3,4 @@
 *resharper*
 *.suo
 /*.txt
+/*/node_modules

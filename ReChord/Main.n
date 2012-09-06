@@ -85,7 +85,7 @@ module Program
 <style type='text/css'>
 h1 {font-size: 14pt}
 body {font-size: 12pt}
-span.chord {font-family:lucida console, courier new, courier; color:blue}
+span.chord {font-family:lucida console, courier new, courier; color:blue; font-weight:bold}
 span.lyric {font-family:lucida console, courier new, courier;}
 h1 {font-family:verdana, helvetica; font-size: 14pt}
 </style>
