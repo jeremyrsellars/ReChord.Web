@@ -47,7 +47,7 @@ class exports.WebApp
    configureWeb: =>
       console.log 'configuring web'
       @app = express()
-      @app.use connect.favicon(__dirname + '/static/favicon.ico')
+      @app.use connect.favicon(__dirname + '/static/ReChord.ico')
       connect.logger.format 'prod_user', (tokens, req, res) =>
          ',{"date":"' + new Date().formatSortable().replace(' ', '_') +
          '","user":"' + (req.user ? "-").replace(/\\/g, '\\\\') +
@@ -86,15 +86,17 @@ class exports.WebApp
 
 
       @app.post '/renderText',  (req,res) => 
+         console.log '/renderText'
          util   = require('util')
          spawn = require('child_process').spawn
          image = __dirname + """\\..\\rechord\\bin\\debug\\ReChord.exe"""
-         reChord = spawn image, ['0', '-3', '-5']
+
+         offsets = ((-parseInt(offset)).toString() for offset in req.body.capoPositions.split ' ')
+         reChord = spawn image, offsets
          res.contentType "text/html"
-         console.gold res.write
 
          reChord.stdout.on 'data', (data) ->
-           console.log 'stdout: ' + data
+           #console.log 'stdout: ' + data
            res.write data
 
          reChord.stderr.on 'data', (data) ->
@@ -104,8 +106,9 @@ class exports.WebApp
            console.log 'child process exited with code ' + code
            res.end()
 
-         reChord.stdin.write req.body.text
-         reChord.stdin.end()
+         console.log req.body.text
+         reChord.stdin.end req.body.text
+         #reChord.stdin.end()
 
       process.openStdin().on 'keypress', (chunk,key)=>
          if key? and key.name == 'c' and key.ctrl

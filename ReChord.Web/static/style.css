@@ -1,0 +1,16 @@
+body
+{
+	padding-top:300px;
+	background:url(ReChord.jpg) #2e2e2e no-repeat top center; overflow:hidden;
+	color:yellow;
+	font-size: 8em;
+	position:absolute;
+	top:10px;
+	left:30px;
+}
+
+iframe
+{
+	background: white;
+	color:white;
+}
