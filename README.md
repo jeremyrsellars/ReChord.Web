@@ -1,4 +1,26 @@
 ReChord
 =======
 
-A lead sheet transposer/formatter in Nemerle
+A lead sheet transposer/formatter in Nemerle.
+
+Web implementation - [rechord.rathertasty.com](http://rechord.rathertasty.com) in coffee-script, express.
+
+Transposes lead sheets in the form of text like this
+
+
+    Birthday Song
+    
+    G            C        D
+    This is your birthday song
+    G        C    D      G
+    It isn't very long,  Hay!!
+
+For example, the above song is in the key of G, when fed into ReChord is translated to an html form, with chords transposed to the Key of E below:
+
+    Birthday Song (Capo + 3)
+    
+    
+    E            A        B
+    This is your birthday song
+    E        A    B      E
+    It isn't very long,  Hay!!
