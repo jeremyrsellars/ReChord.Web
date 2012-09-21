@@ -47,6 +47,6 @@ namespace ReChord
         Line.Lyric(text)
     }
     
-    chordLineRegex = Regex(@"^((\s*[A-G][b#]?[Mm]?(sus)?\d*)/?)+\s*$");
+    chordLineRegex = Regex(@"^((\s*[A-G][b#]?[Mm]?(aj|sus)?\d*)/?)+\W*$");
   }
 }
