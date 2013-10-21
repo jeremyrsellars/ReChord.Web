@@ -4,3 +4,4 @@
 *.suo
 /*.txt
 /*/node_modules
+run.cmd

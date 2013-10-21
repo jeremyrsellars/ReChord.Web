@@ -31,17 +31,17 @@ class exports.WebApp
       @port ?= process.env.PORT ? 2999
 
    run: ->
-      process.title = 'ReChord Web App - initializing ' + @httpsPort
+      process.title = 'ReChord Web App - initializing ' + @port
       @writeHeader()
       process.title += '.'
       @configureWeb()
       process.title += '.'
       @listen()
-      process.title = 'ReChord Web App ' + @httpsPort
+      process.title = 'ReChord Web App ' + @port
 
    writeHeader: ->
       console.log  '==================='
-      console.gold ' ReChord Web App :' + @httpsPort
+      console.gold ' ReChord Web App :' + @port
       console.log  '==================='
 
    configureWeb: =>
@@ -80,13 +80,15 @@ class exports.WebApp
       @app.get '/logs/:log', (req, res) =>
          @respondWithLog req.params.log, res
 
-      @app.use '/static',  require('connect').static(__dirname + '/static')
+      @app.use '/rechord',  require('connect').static(__dirname + '/static')
+      @app.get '/rechord', (req,res) ->
+         res.redirect '/rechord/Index.html'
       @app.get '/', (req,res) ->
-         res.redirect '/static/Index.html'
+         res.redirect '/rechord/Index.html'
 
 
-      @app.post '/renderText',  (req,res) => 
-         console.log '/renderText'
+      @app.post '/rechord/renderText',  (req,res) => 
+         console.log '/rechord/renderText'
          util   = require('util')
          spawn = require('child_process').spawn
          image = __dirname + """\\..\\rechord\\bin\\debug\\ReChord.exe"""
