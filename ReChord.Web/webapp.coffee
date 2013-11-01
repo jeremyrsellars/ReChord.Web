@@ -89,28 +89,21 @@ class exports.WebApp
 
       @app.post '/rechord/renderText',  (req,res) => 
          console.log '/rechord/renderText'
-         util   = require('util')
-         spawn = require('child_process').spawn
-         image = __dirname + """\\..\\rechord\\bin\\debug\\ReChord.exe"""
+         rechord  = require('./rechord')
 
-         offsets = ((-parseInt(offset)).toString() for offset in req.body.capoPositions.split ' ')
-         reChord = spawn image, offsets
-         res.contentType "text/html"
+         offsets = (-parseInt(offset) for offset in req.body.capoPositions.split ' ')
+         console.log rechord
+         #res.contentType "text/html"
+         res.contentType "text"
 
-         reChord.stdout.on 'data', (data) ->
-           #console.log 'stdout: ' + data
-           res.write data
+         for offset in offsets
+            res.write rechord.main req.body.text, offset, rechord.preferSharps
+            res.write '\r\n\r\n'
 
-         reChord.stderr.on 'data', (data) ->
-           console.log 'stderr: ' + data
-
-         reChord.on 'exit',  (code) ->
-           console.log 'child process exited with code ' + code
-           res.end()
-
+         res.end()
+         #   (# rechord.main req.body.text, 0, prefer-sharps
+         #   )
          console.log req.body.text
-         reChord.stdin.end req.body.text
-         #reChord.stdin.end()
 
       process.openStdin().on 'keypress', (chunk,key)=>
          if key? and key.name == 'c' and key.ctrl
