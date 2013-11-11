@@ -2,6 +2,7 @@ fs = require 'fs'
 path = require 'path'
 express = require 'express'
 connect = require 'connect'
+rechord = require 'rechord'
 
 console.combine = (a, item, remaining...) ->
    a.push item if item?
@@ -89,15 +90,23 @@ class exports.WebApp
 
       @app.post '/rechord/renderText',  (req,res) => 
          console.log '/rechord/renderText'
-         rechord  = require('./rechord')
 
          offsets = (-parseInt(offset) for offset in req.body.capoPositions.split ' ')
-         console.log rechord
-         #res.contentType "text/html"
-         res.contentType "text"
+         res.contentType "text/html"
+         res.write "<html><head>
+<style type='text/css'>
+h1 {font-size: 14pt}
+body {font-size: 12pt}
+span.chord {font-family:lucida console, courier new, courier; color:blue; white-space: pre;}
+span.lyric {font-family:lucida console, courier new, courier; white-space: pre;}
+h1 {font-family:verdana, helvetica; font-size: 14pt}
+</style>
+</head>
+<body>
+"
 
          for offset in offsets
-            res.write rechord.main req.body.text, offset, rechord.preferSharps
+            res.write rechord.rechordHtml req.body.text, offset, rechord.preferSharps
             res.write '\r\n\r\n'
 
          res.end()
@@ -113,6 +122,8 @@ class exports.WebApp
       
       process.on 'exit', =>
          @cleanup()
+
+      console.log 'done'
 
    configureDebug: =>
       @logOptions = { immediate: false, format: 'dev_user' }
