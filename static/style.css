@@ -3,14 +3,17 @@ body
 	padding-top:300px;
 	background:url(ReChord.jpg) #2e2e2e no-repeat top center;
 	color:yellow;
-	font-size: 8em;
 	position:absolute;
 	top:10px;
 	left:30px;
 }
-
+div
+{
+	font-size: 1.2em;
+}
 iframe
 {
 	background: white;
 	color:white;
 }
+

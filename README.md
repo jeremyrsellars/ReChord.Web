@@ -1,9 +1,9 @@
 ReChord
 =======
 
-A lead sheet transposer/formatter in Nemerle.
+A lead sheet transposer/formatter in ClojureScript.
 
-Web implementation - [rechord.rathertasty.com](http://rechord.rathertasty.com) in coffee-script, express.
+Web implementation - [squared.azurewebsites.net](http://squared.azurewebsites.net) in ClojureScript, coffee-script, express.
 
 Transposes lead sheets in the form of text like this
 
