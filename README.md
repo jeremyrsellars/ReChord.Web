@@ -3,7 +3,7 @@ ReChord
 
 A lead sheet transposer/formatter in ClojureScript.
 
-Web implementation - [squared.azurewebsites.net](http://squared.azurewebsites.net) in ClojureScript, coffee-script, express.
+Web implementation - [rechord.azurewebsites.net](http://rechord.azurewebsites.net) in ClojureScript, coffee-script, express.
 
 Transposes lead sheets in the form of text like this
 
