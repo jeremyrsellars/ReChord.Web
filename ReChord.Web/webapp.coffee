@@ -2,6 +2,7 @@ fs = require 'fs'
 path = require 'path'
 express = require 'express'
 connect = require 'connect'
+rechord = require 'rechord'
 
 console.combine = (a, item, remaining...) ->
    a.push item if item?
@@ -89,28 +90,29 @@ class exports.WebApp
 
       @app.post '/rechord/renderText',  (req,res) => 
          console.log '/rechord/renderText'
-         util   = require('util')
-         spawn = require('child_process').spawn
-         image = __dirname + """\\..\\rechord\\bin\\debug\\ReChord.exe"""
 
-         offsets = ((-parseInt(offset)).toString() for offset in req.body.capoPositions.split ' ')
-         reChord = spawn image, offsets
+         offsets = (-parseInt(offset) for offset in req.body.capoPositions.split ' ')
          res.contentType "text/html"
+         res.write "<html><head>
+<style type='text/css'>
+h1 {font-size: 14pt}
+body {font-size: 12pt}
+span.chord {font-family:lucida console, courier new, courier; color:blue; white-space: pre;}
+span.lyric {font-family:lucida console, courier new, courier; white-space: pre;}
+h1 {font-family:verdana, helvetica; font-size: 14pt}
+</style>
+</head>
+<body>
+"
 
-         reChord.stdout.on 'data', (data) ->
-           #console.log 'stdout: ' + data
-           res.write data
+         for offset in offsets
+            res.write rechord.rechordHtml req.body.text, offset, rechord.preferSharps
+            res.write '\r\n\r\n'
 
-         reChord.stderr.on 'data', (data) ->
-           console.log 'stderr: ' + data
-
-         reChord.on 'exit',  (code) ->
-           console.log 'child process exited with code ' + code
-           res.end()
-
+         res.end()
+         #   (# rechord.main req.body.text, 0, prefer-sharps
+         #   )
          console.log req.body.text
-         reChord.stdin.end req.body.text
-         #reChord.stdin.end()
 
       process.openStdin().on 'keypress', (chunk,key)=>
          if key? and key.name == 'c' and key.ctrl
@@ -120,6 +122,8 @@ class exports.WebApp
       
       process.on 'exit', =>
          @cleanup()
+
+      console.log 'done'
 
    configureDebug: =>
       @logOptions = { immediate: false, format: 'dev_user' }
